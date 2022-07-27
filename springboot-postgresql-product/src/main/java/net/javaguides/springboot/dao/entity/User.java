@@ -1,4 +1,4 @@
-package net.javaguides.springboot.model;
+package net.javaguides.springboot.dao.entity;
 
 import javax.persistence.*;
 
@@ -126,7 +126,8 @@ public class User {
     }
 
 
+    public User orElseThrow(Object o) {
 
-
-
+        return null;
+    }
 }
