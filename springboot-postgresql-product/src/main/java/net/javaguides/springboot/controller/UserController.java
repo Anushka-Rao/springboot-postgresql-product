@@ -1,10 +1,11 @@
 package net.javaguides.springboot.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 
+import net.javaguides.springboot.Exception.ResourceNotFoundException;
 import net.javaguides.springboot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -34,9 +35,9 @@ public class UserController {
 
     // get user by id
     @GetMapping("/users/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable(value = "id") long userId)
-    {
-        User user = userService.findById(userId);
+    public ResponseEntity<ResponseEntity<User>> getUserById(@PathVariable(value = "id") long userId)
+            throws ResourceNotFoundException {
+        ResponseEntity<User> user = userService.findById(userId);
 
         return ResponseEntity.ok().body(user);
     }
@@ -47,23 +48,14 @@ public class UserController {
     }
 
     // update user
-    @PutMapping("users/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable(value = "id") long userId,
-                                           @Valid @RequestBody User userDetails) {
-        User user = userService.findById(userId);
-
-        return ResponseEntity.ok(this.userService.save(user));
-    }
 
     // delete user
-    @DeleteMapping("users/{id}")
-    public Map<String, Boolean> deleteUser(@PathVariable(value = "id") Long userId) {
-        User user = userService.findById(userId);
-        this.userService.delete(user);
 
+    @DeleteMapping("users/{id}")
+    public Map<String, Boolean> deleteUser(@PathVariable(value = "id") long userId) throws ResourceNotFoundException {
+        ResponseEntity<User> user = userService.findById(userId);
         Map<String, Boolean> response = new HashMap<>();
         response.put("deleted", Boolean.TRUE);
-
         return response;
 
     }
