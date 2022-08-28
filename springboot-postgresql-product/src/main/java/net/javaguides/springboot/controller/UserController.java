@@ -1,13 +1,11 @@
 package net.javaguides.springboot.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 
 import net.javaguides.springboot.Exception.ResourceNotFoundException;
 import net.javaguides.springboot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,17 +27,14 @@ public class UserController {
     // get users
 
     @GetMapping("users")
-    public List<User> getAllUser(){
-        return this.userService.findAll();
+    public List<User> getAllUsers(){
+        return this.userService.getAllUsers();
     }
 
     // get user by id
-    @GetMapping("/users/{id}")
-    public ResponseEntity<ResponseEntity<User>> getUserById(@PathVariable(value = "id") long userId)
-            throws ResourceNotFoundException {
-        ResponseEntity<User> user = userService.findById(userId);
-
-        return ResponseEntity.ok().body(user);
+    @GetMapping("users/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable("id") long userId) throws ResourceNotFoundException {
+        return new ResponseEntity<User>(userService.getUserById(userId), HttpStatus.OK);
     }
     // save user
     @PostMapping("users")
@@ -48,15 +43,19 @@ public class UserController {
     }
 
     // update user
+    @PutMapping("users/{id}")
+        public ResponseEntity<User>updateUser(@PathVariable("id") long userId, @RequestBody User user) throws ResourceNotFoundException {
+
+        return new ResponseEntity<User>(userService.updateUser(user, userId), HttpStatus.OK );
+    }
 
     // delete user
 
     @DeleteMapping("users/{id}")
-    public Map<String, Boolean> deleteUser(@PathVariable(value = "id") long userId) throws ResourceNotFoundException {
-        ResponseEntity<User> user = userService.findById(userId);
-        Map<String, Boolean> response = new HashMap<>();
-        response.put("deleted", Boolean.TRUE);
-        return response;
+    public ResponseEntity<String> deleteUser(@PathVariable("id") long userId) throws ResourceNotFoundException {
+        userService.deleteUserById(userId);
+
+        return new ResponseEntity<String>("User details deleted successfully!", HttpStatus.OK);
 
     }
 
